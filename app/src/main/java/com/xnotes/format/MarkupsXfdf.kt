@@ -97,13 +97,29 @@ object MarkupsXfdf {
         })
         attr("xnotes:text", m.text)
         val note = m.note
-        if (note == null) {
-            append("/>\n")
-        } else {
-            append(">\n   <contents>")
-            text(note)
-            append("</contents>\n  </").append(m.type.id).append(">\n")
+if (note == null && m.imageAttachments.isEmpty()) {
+    append("/>\n")
+} else {
+    append(">\n")
+
+    if (note != null) {
+        append("   <contents>")
+        text(note)
+        append("</contents>\n")
+    }
+
+    if (m.imageAttachments.isNotEmpty()) {
+        append("   <xnotes:images>\n")
+        for (image in m.imageAttachments) {
+            append("    <xnotes:image>")
+            text(image)
+            append("</xnotes:image>\n")
         }
+        append("   </xnotes:images>\n")
+    }
+
+    append("  </").append(m.type.id).append(">\n")
+}
     }
 
     private fun StringBuilder.attr(name: String, value: String) {
